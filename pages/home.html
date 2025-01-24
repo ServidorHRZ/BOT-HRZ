@@ -878,6 +878,137 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .results-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(56, 176, 0, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .league-header {
+            text-align: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(109, 235, 50, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .league-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .match-details {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            min-width: 120px;
+        }
+
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(109, 235, 50, 0.2);
+        }
+
+        .team span {
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .match-score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background: rgba(109, 235, 50, 0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .prediction {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(109, 235, 50, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .prediction .label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .prediction .value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .success-icon, .failed-icon {
+            margin-left: auto;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .success-icon {
+            background: rgba(109, 235, 50, 0.1);
+            color: var(--primary-color);
+        }
+
+        .failed-icon {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+        }
+
+        @media (max-width: 480px) {
+            .match-details {
+                gap: 1rem;
+            }
+            
+            .team {
+                min-width: 80px;
+            }
+            
+            .team-logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .match-score {
+                font-size: 1.4rem;
+                padding: 0.4rem 1rem;
+                min-width: 80px;
+            }
+            
+            .team span {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -967,20 +1098,10 @@
         <!-- Sección de Resultados -->
         <div id="resultados-section" class="content-section" style="display: none;">
             <div class="section-header">
-                <h2><i class="fas fa-poll"></i> Historial de Resultados</h2>
+                <h2><i class="fas fa-history"></i> Historial de Resultados</h2>
             </div>
             <div class="section-content">
-                <div class="results-card">
-                    <h3><i class="fas fa-check-circle"></i> Últimos Aciertos</h3>
-                    <div class="result-item">
-                        <span class="success"><i class="fas fa-check"></i></span>
-                        <p>Bayern Munich vs Dortmund - Over 2.5 ✓</p>
-                    </div>
-                    <div class="result-item">
-                        <span class="success"><i class="fas fa-check"></i></span>
-                        <p>PSG vs Lyon - BTTS ✓</p>
-                    </div>
-                </div>
+                <!-- Aquí se cargarán los resultados -->
             </div>
         </div>
 
@@ -1094,9 +1215,13 @@
                 const sectionId = btn.dataset.section;
                 showSection(sectionId);
                 
-                // Agregar esta condición para cargar las noticias
+                // Cargar el contenido correspondiente según la sección
                 if (sectionId === 'noticias-section') {
-                    fetchSportsNews('all'); // Cargar todas las noticias por defecto
+                    fetchSportsNews('all');
+                } else if (sectionId === 'resultados-section') {
+                    loadResults(); // Cargar los resultados cuando se seleccione esa pestaña
+                } else if (sectionId === 'pronosticos-section') {
+                    loadPronosticos();
                 }
             });
         });
@@ -1790,6 +1915,158 @@ IMPORTANTE: Responde SOLAMENTE con un objeto JSON que tenga exactamente esta est
                 console.error('Error al obtener el feed RSS:', error);
                 return [];
             }
+        }
+
+        function clearResultsCache() {
+            const cachedTimestamp = localStorage.getItem('resultsTimestamp');
+            if (cachedTimestamp) {
+                const now = new Date().getTime();
+                const timeDiff = now - parseInt(cachedTimestamp);
+                const threeHours = 3 * 60 * 60 * 1000;
+                
+                if (timeDiff >= threeHours) {
+                    localStorage.removeItem('resultsData');
+                    localStorage.removeItem('resultsTimestamp');
+                    console.log('Caché de resultados borrado por tiempo expirado');
+                }
+            }
+        }
+
+        async function fetchResults() {
+            const now = new Date();
+            const cachedData = localStorage.getItem('resultsData');
+            const cachedTimestamp = localStorage.getItem('resultsTimestamp');
+
+            // Verificar si hay datos en caché y si no han pasado 3 horas
+            if (cachedData && cachedTimestamp) {
+                const timeDiff = now.getTime() - parseInt(cachedTimestamp);
+                const threeHours = 3 * 60 * 60 * 1000; // 3 horas en milisegundos
+                
+                if (timeDiff < threeHours) {
+                    console.log('Usando datos en caché');
+                    return JSON.parse(cachedData);
+                }
+            }
+
+            try {
+                console.log('Realizando nueva solicitud de resultados a la API');
+                const url = 'https://magicloops.dev/api/loop/fbdd9b60-f514-4974-bf67-08c2c831f242/run';
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ "input": "I love Magic Loops!" })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la API');
+                }
+
+                const data = await response.json();
+                console.log('Respuesta de la API de resultados:', data);
+                
+                const transformedData = {
+                    results: data.matches.map(match => ({
+                        league: match.league || 'Liga no especificada',
+                        home_team: match.team1,
+                        away_team: match.team2,
+                        score: match.result || 'VS',
+                        logo1: match.logo1,
+                        logo2: match.logo2
+                    }))
+                };
+                
+                // Guardar en caché con timestamp
+                localStorage.setItem('resultsData', JSON.stringify(transformedData));
+                localStorage.setItem('resultsTimestamp', now.getTime().toString());
+                
+                return transformedData;
+            } catch (error) {
+                console.error('Error al obtener resultados:', error);
+                // Si hay error, intentar usar datos en caché aunque hayan pasado 3 horas
+                if (cachedData) {
+                    console.log('Usando datos en caché debido a error en la API');
+                    return JSON.parse(cachedData);
+                }
+                return null;
+            }
+        }
+
+        async function loadResults() {
+            console.log('Iniciando carga de resultados');
+            showLoader();
+            
+            try {
+                clearResultsCache(); // Solo limpiará si han pasado 3 horas
+                const data = await fetchResults();
+                console.log('Resultados obtenidos:', data);
+                
+                if (data && data.results) {
+                    displayResults(data.results);
+                } else {
+                    const resultsContent = document.querySelector('#resultados-section .section-content');
+                    if (resultsContent) {
+                        resultsContent.innerHTML = `
+                            <div class="results-card">
+                                <h3><i class="fas fa-exclamation-triangle"></i> Sin datos</h3>
+                                <p>No hay resultados disponibles en este momento.</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar resultados:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function displayResults(results) {
+            const resultsContent = document.querySelector('#resultados-section .section-content');
+            if (!resultsContent) return;
+
+            if (!results || results.length === 0) {
+                resultsContent.innerHTML = `
+                    <div class="results-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Sin datos</h3>
+                        <p>No hay resultados disponibles en este momento.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const resultsHTML = results.map(result => `
+                <div class="results-card">
+                    <div class="league-header">
+                        <i class="fas fa-trophy"></i>
+                        <h3>${result.league}</h3>
+                    </div>
+                    <div class="result-item">
+                        <div class="match-details">
+                            <div class="team">
+                                <img src="${result.logo1}" 
+                                     alt="${result.home_team}" 
+                                     class="team-logo"
+                                     onerror="this.src='https://via.placeholder.com/60/1a1a1a/6deb32?text=⚽'">
+                                <span>${result.home_team}</span>
+                            </div>
+                            <div class="match-score">
+                                ${result.score}
+                            </div>
+                            <div class="team">
+                                <img src="${result.logo2}" 
+                                     alt="${result.away_team}" 
+                                     class="team-logo"
+                                     onerror="this.src='https://via.placeholder.com/60/1a1a1a/6deb32?text=⚽'">
+                                <span>${result.away_team}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContent.innerHTML = resultsHTML;
         }
     </script>
 </body>
