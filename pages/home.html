@@ -907,26 +907,18 @@
             align-items: center;
             justify-content: center;
             gap: 2rem;
-            width: 100%;
             padding: 1rem;
-        }
-
-        .team {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-            min-width: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
         }
 
         .team-logo {
             width: 60px;
             height: 60px;
             object-fit: contain;
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 50%;
             padding: 5px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(109, 235, 50, 0.2);
         }
 
         .team span {
@@ -985,28 +977,15 @@
             color: #ff4444;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
             .match-details {
                 gap: 1rem;
-            }
-            
-            .team {
-                min-width: 80px;
+                padding: 0.8rem;
             }
             
             .team-logo {
                 width: 40px;
                 height: 40px;
-            }
-            
-            .match-score {
-                font-size: 1.4rem;
-                padding: 0.4rem 1rem;
-                min-width: 80px;
-            }
-            
-            .team span {
-                font-size: 0.8rem;
             }
         }
     </style>
@@ -2039,8 +2018,7 @@ IMPORTANTE: Responde SOLAMENTE con un objeto JSON que tenga exactamente esta est
             const resultsHTML = results.map(result => `
                 <div class="results-card">
                     <div class="league-header">
-                        <i class="fas fa-trophy"></i>
-                        <h3>${result.league}</h3>
+                        <h3><i class="fas fa-trophy"></i> ${result.league || 'Liga no especificada'}</h3>
                     </div>
                     <div class="result-item">
                         <div class="match-details">
@@ -2048,17 +2026,19 @@ IMPORTANTE: Responde SOLAMENTE con un objeto JSON que tenga exactamente esta est
                                 <img src="${result.logo1}" 
                                      alt="${result.home_team}" 
                                      class="team-logo"
-                                     onerror="this.src='https://via.placeholder.com/60/1a1a1a/6deb32?text=⚽'">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiMxYTFhMWEiLz48dGV4dCB4PSIzMCIgeT0iMzAiIGZpbGw9IiM2ZGViMzIiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj7imJU8L3RleHQ+PC9zdmc+'"
+                                     loading="lazy">
                                 <span>${result.home_team}</span>
                             </div>
                             <div class="match-score">
-                                ${result.score}
+                                ${result.score || 'VS'}
                             </div>
                             <div class="team">
                                 <img src="${result.logo2}" 
                                      alt="${result.away_team}" 
                                      class="team-logo"
-                                     onerror="this.src='https://via.placeholder.com/60/1a1a1a/6deb32?text=⚽'">
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9IiMxYTFhMWEiLz48dGV4dCB4PSIzMCIgeT0iMzAiIGZpbGw9IiM2ZGViMzIiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj7imJU8L3RleHQ+PC9zdmc+'"
+                                     loading="lazy">
                                 <span>${result.away_team}</span>
                             </div>
                         </div>
