@@ -398,6 +398,93 @@
                 return false;
             }
         }
+
+        async function fetchResults() {
+            const now = new Date();
+            const cachedData = localStorage.getItem('resultsData');
+            const cachedTimestamp = localStorage.getItem('resultsTimestamp');
+
+            // Check if we have cached data and if it's less than 3 hours old
+            if (cachedData && cachedTimestamp) {
+                const timeDiff = now.getTime() - parseInt(cachedTimestamp);
+                const threeHours = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+                
+                if (timeDiff < threeHours) {
+                    console.log('Usando resultados en caché');
+                    return JSON.parse(cachedData);
+                }
+            }
+
+            // If no cache or expired, fetch new data
+            try {
+                console.log('Realizando nueva solicitud de resultados a la API');
+                const url = 'https://magicloops.dev/api/loop/fbdd9b60-f514-4974-bf67-08c2c831f242/run';
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ "input": "I love Magic Loops!" })
+                });
+
+                const data = await response.json();
+                console.log('Respuesta de la API de resultados:', data);
+                
+                // Save in localStorage with timestamp
+                localStorage.setItem('resultsData', JSON.stringify(data));
+                localStorage.setItem('resultsTimestamp', now.getTime().toString());
+                
+                return data;
+            } catch (error) {
+                console.error('Error al obtener resultados:', error);
+                return null;
+            }
+        }
+
+        async function loadResults() {
+            console.log('Iniciando carga de resultados');
+            showLoader();
+            
+            try {
+                const data = await fetchResults();
+                console.log('Resultados obtenidos:', data);
+                
+                if (data && data.results) {
+                    displayResults(data.results);
+                } else {
+                    const resultsContent = document.querySelector('#resultados-section .section-content');
+                    if (resultsContent) {
+                        resultsContent.innerHTML = `
+                            <div class="results-card">
+                                <h3><i class="fas fa-exclamation-triangle"></i> Sin datos</h3>
+                                <p>No hay resultados disponibles en este momento.</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error al cargar resultados:', error);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function displayResults(results) {
+            const resultsContent = document.querySelector('#resultados-section .section-content');
+            if (!resultsContent) return;
+
+            const resultsHTML = results.map(result => `
+                <div class="results-card">
+                    <h3><i class="fas fa-trophy"></i> ${result.league}</h3>
+                    <div class="result-item">
+                        <span class="success"><i class="fas fa-check"></i></span>
+                        <p>${result.home_team} ${result.score} ${result.away_team} - ${result.prediction} ✓</p>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContent.innerHTML = resultsHTML;
+        }
     </script>
 </body>
 </html>
