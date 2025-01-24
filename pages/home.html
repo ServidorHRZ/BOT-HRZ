@@ -907,18 +907,26 @@
             align-items: center;
             justify-content: center;
             gap: 2rem;
+            width: 100%;
             padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            min-width: 120px;
         }
 
         .team-logo {
             width: 60px;
             height: 60px;
             object-fit: contain;
-            background: rgba(0, 0, 0, 0.2);
             border-radius: 50%;
             padding: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(109, 235, 50, 0.2);
         }
 
         .team span {
@@ -977,15 +985,28 @@
             color: #ff4444;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .match-details {
                 gap: 1rem;
-                padding: 0.8rem;
+            }
+            
+            .team {
+                min-width: 80px;
             }
             
             .team-logo {
                 width: 40px;
                 height: 40px;
+            }
+            
+            .match-score {
+                font-size: 1.4rem;
+                padding: 0.4rem 1rem;
+                min-width: 80px;
+            }
+            
+            .team span {
+                font-size: 0.8rem;
             }
         }
     </style>
