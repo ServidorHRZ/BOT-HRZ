@@ -1399,7 +1399,7 @@
         async function getPrediction(match) {
             try {
                 const API_KEY = 'AIzaSyCu6--GR8Hr1JV8PNlr5nEVNyjD51JvoEo';
-                const prompt = `Actúa como un experto analista de fútbol. Analiza el siguiente partido y genera una predicción basada en estadísticas:
+                const prompt = `Actúa como el mejor experto analista de fútbol. Analiza el siguiente partido y genera una predicción basada en estadísticas de todo tipo:
 
 Partido: ${match.home_team.name} vs ${match.away_team.name}
 Liga: ${match.league}
@@ -1412,8 +1412,12 @@ IMPORTANTE: Responde SOLAMENTE con un objeto JSON que tenga exactamente esta est
     "over15Prob": 75,
     "over25Prob": 60,
     "predictedScore": "2-1",
-    "reasoning": "Breve análisis del partido"
-}`;
+    "reasoning": "Breve análisis del partido",
+    "confidenceLevel": 85,
+    "suggestedBet": 7.5
+}
+Donde confidenceLevel es un número del 1 al 100 que indica la confianza en la predicción
+y suggestedBet es un número entre 1 y 7 dólares para apostar basado en la confianza si la confianza es menor a 79% suguiere un valor bajo para apostar entre 2 a 5 dolares `;
 
                 const response = await fetch(
                     `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
@@ -1674,6 +1678,53 @@ IMPORTANTE: Responde SOLAMENTE con un objeto JSON que tenga exactamente esta est
                                     </h5>
                                     <span style="font-size: 1.2rem; color: #fff;">
                                         ${prediction.predictedScore}
+                                    </span>
+                                </div>
+
+                                <div class="prediction-item" style="
+                                    background: rgba(109, 235, 50, 0.1);
+                                    padding: 15px;
+                                    border-radius: 10px;
+                                    border: 1px solid rgba(109, 235, 50, 0.2);
+                                ">
+                                    <h5 style="color: #6deb32; margin-bottom: 10px;">
+                                        <i class="fas fa-percentage"></i> Nivel de Confianza
+                                    </h5>
+                                    <div style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                    ">
+                                        <div style="
+                                            flex-grow: 1;
+                                            height: 8px;
+                                            background: rgba(255, 255, 255, 0.1);
+                                            border-radius: 4px;
+                                            overflow: hidden;
+                                        ">
+                                            <div style="
+                                                width: ${prediction.confidenceLevel}%;
+                                                height: 100%;
+                                                background: #6deb32;
+                                            "></div>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #fff;">
+                                            ${prediction.confidenceLevel}%
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="prediction-item" style="
+                                    background: rgba(109, 235, 50, 0.1);
+                                    padding: 15px;
+                                    border-radius: 10px;
+                                    border: 1px solid rgba(109, 235, 50, 0.2);
+                                ">
+                                    <h5 style="color: #6deb32; margin-bottom: 10px;">
+                                        <i class="fas fa-dollar-sign"></i> Apuesta Sugerida USD
+                                    </h5>
+                                    <span style="font-size: 1.2rem; color: #fff;">
+                                        $${prediction.suggestedBet.toFixed(0)} USD
                                     </span>
                                 </div>
                             </div>
