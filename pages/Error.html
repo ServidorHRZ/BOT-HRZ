@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Acceso Prohibido</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6deb32;
+            --primary-hover: #44af0e;
+            --bg-gradient: linear-gradient(45deg, #000000, #111111);
+            --shadow-color: rgba(56, 176, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: clamp(30px, 5vw, 50px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 255, 0, 0.2);
+            width: min(90%, 600px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .warning-icon {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--shadow-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: clamp(24px, 4vw, 32px);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--shadow-color);
+        }
+
+        p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .alert-icon {
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        .return-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .return-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+        }
+
+        .return-btn i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 25px;
+            }
+
+            .warning-icon {
+                font-size: 40px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <i class="fas fa-shield-alt warning-icon"></i>
+        <h1>ACCESO DENEGADO</h1>
+        <p><i class="fas fa-exclamation-circle alert-icon"></i>Está prohibido intentar inspeccionar o modificar esta página.</p>
+        <p><i class="fas fa-user-shield alert-icon"></i>Las acciones que perjudiquen la plataforma resultarán en:</p>
+        <p>
+            <i class="fas fa-ban alert-icon"></i>Suspensión permanente de la cuenta<br>
+            <i class="fas fa-clock alert-icon"></i>Bloqueo inmediato del acceso al servicio
+        </p>
+        <p><i class="fas fa-lock alert-icon"></i>Todas las actividades están siendo monitoreadas por seguridad.</p>
+        
+        <a href="../index.html" class="return-btn">
+            <i class="fas fa-arrow-left"></i>Volver al Inicio
+        </a>
+    </div>
+</body>
+</html>

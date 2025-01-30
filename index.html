@@ -486,5 +486,74 @@
             resultsContent.innerHTML = resultsHTML;
         }
     </script>
+    <script>
+        (function preventInspect() {
+            // Detecta combinaciones de teclas para herramientas de desarrollador
+            document.addEventListener('keydown', function (event) {
+                if (
+                    event.key === 'F12' || 
+                    (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J')) || 
+                    (event.ctrlKey && event.key === 'U')
+                ) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: '<i class="fas fa-shield-alt" style="color: #ff3e3e"></i> Acceso Denegado',
+                        html: `
+                            <div style="text-align: left; padding: 10px;">
+                                <p style="color: #ff3e3e; margin: 15px 0;">
+                                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
+                                    No está permitido inspeccionar esta página
+                                </p>
+                                <p style="color: #fff; margin: 15px 0;">
+                                    <i class="fas fa-info-circle" style="color: #38B000; margin-right: 10px;"></i>
+                                    Por razones de seguridad, serás redirigido
+                                </p>
+                            </div>
+                        `,
+                        icon: 'error',
+                        background: '#000',
+                        color: '#fff',
+                        iconColor: '#ff3e3e',
+                        confirmButtonColor: '#38B000',
+                        customClass: {
+                            popup: 'swal-custom-popup'
+                        }
+                    }).then(() => {
+                        window.location.href = 'pages/Error.html';
+                    });
+                }
+            });
+
+            // Bloquea el clic derecho
+            document.addEventListener('contextmenu', function (event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: '<i class="fas fa-mouse" style="color: #ff9800"></i> Acción No Permitida',
+                    html: `
+                        <div style="text-align: left; padding: 10px;">
+                            <p style="color: #ff9800; margin: 15px 0;">
+                                <i class="fas fa-ban" style="margin-right: 10px;"></i>
+                                El clic derecho está deshabilitado
+                            </p>
+                            <p style="color: #fff; margin: 15px 0;">
+                                <i class="fas fa-info-circle" style="color: #38B000; margin-right: 10px;"></i>
+                                Esta es una medida de seguridad
+                            </p>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    background: '#000',
+                    color: '#fff',
+                    iconColor: '#ff9800',
+                    confirmButtonColor: '#38B000',
+                    customClass: {
+                        popup: 'swal-custom-popup'
+                    }
+                });
+            });
+        })();
+    </script>
+      
+      
 </body>
 </html>
