@@ -1011,6 +1011,62 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* Agregar estos estilos para el menú inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 0.8rem;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid rgba(109, 235, 50, 0.2);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background: rgba(109, 235, 50, 0.1);
+        }
+
+        /* Ajustar el contenido principal para el menú inferior */
+        .main-content {
+            padding-bottom: 80px; /* Espacio para el menú inferior */
+        }
+
+        /* Ajustar el estilo de la barra superior */
+        .navbar {
+            padding: 1rem;
+        }
+
+        .navbar-content {
+            justify-content: space-between;
+        }
+
+        /* Ocultar la navegación por pestañas original */
+        .tab-navigation {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -1143,6 +1199,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Agregar el menú de navegación inferior antes del cierre del body -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-section="pronosticos-section">
+            <i class="fas fa-futbol"></i>
+            <span>Pronósticos</span>
+        </a>
+        <a href="#" class="nav-item" data-section="resultados-section">
+            <i class="fas fa-poll"></i>
+            <span>Resultados</span>
+        </a>
+        <a href="#" class="nav-item" data-section="noticias-section">
+            <i class="fas fa-newspaper"></i>
+            <span>Noticias</span>
+        </a>
+    </nav>
 
     <script>
         // Verificar si el usuario está autenticado
@@ -1569,18 +1641,6 @@ y suggestedBet es un número entre 1 y 5 dólares para apostar basado en la conf
                             ">
                                 <i class="fas fa-map-marker-alt" style="color: #6deb32"></i>
                                 <span style="color: #fff; font-size: 0.9rem;">${match.stadium}</span>
-                            </div>
-                            
-                            <div style="
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                                background: rgba(255, 255, 255, 0.05);
-                                padding: 8px 15px;
-                                border-radius: 20px;
-                            ">
-                                <i class="fas fa-clock" style="color: #6deb32"></i>
-                                <span style="color: #fff; font-size: 0.9rem;">${match.time}</span>
                             </div>
                         </div>
 
@@ -2121,6 +2181,36 @@ y suggestedBet es un número entre 1 y 5 dólares para apostar basado en la conf
 
             resultsContent.innerHTML = resultsHTML;
         }
+
+        // Actualizar el manejo de la navegación
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remover clase active de todos los items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Agregar clase active al item seleccionado
+                    item.classList.add('active');
+                    
+                    // Mostrar la sección correspondiente
+                    const sectionId = item.dataset.section;
+                    showSection(sectionId);
+                    
+                    // Cargar el contenido correspondiente
+                    if (sectionId === 'noticias-section') {
+                        fetchSportsNews('all');
+                    } else if (sectionId === 'resultados-section') {
+                        loadResults();
+                    } else if (sectionId === 'pronosticos-section') {
+                        loadPronosticos();
+                    }
+                });
+            });
+        });
     </script>
     <script>
         (function preventInspect() {
