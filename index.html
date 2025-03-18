@@ -284,10 +284,11 @@
                         const plan = row[4];
 
                         if (currentDate >= fechaInicio && currentDate <= fechaFinal) {
-                            sessionStorage.setItem('userAuth', 'true');
-                            sessionStorage.setItem('userName', usuario);
-                            sessionStorage.setItem('userPlan', plan);
-                            sessionStorage.setItem('validDate', row[3]);
+                            localStorage.setItem('userAuth', 'true');
+                            localStorage.setItem('userName', usuario);
+                            localStorage.setItem('userPlan', plan);
+                            localStorage.setItem('validDate', row[3]);
+                            localStorage.setItem('loginTimestamp', new Date().getTime());
                             
                             Swal.fire({
                                 title: `<i class="fas fa-check-circle" style="color: #38B000"></i> ¡Bienvenido ${usuario}!`,

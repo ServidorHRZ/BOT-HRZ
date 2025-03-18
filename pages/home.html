@@ -1067,6 +1067,196 @@
         .tab-navigation {
             display: none;
         }
+
+        /* Estilos para la sección En Vivo */
+        .live-content {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1.5rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .main-player-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(109, 235, 50, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(109, 235, 50, 0.2);
+        }
+
+        .player-header h2 {
+            margin: 0;
+            text-align: center;
+        }
+
+        .main-player {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background: #000;
+        }
+
+        .main-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .current-channel-info {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(109, 235, 50, 0.2);
+        }
+
+        .channel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .current-channel-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .channel-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .channels-list {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(109, 235, 50, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .channels-category h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .channel-item {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(109, 235, 50, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .channel-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            background: rgba(109, 235, 50, 0.1);
+        }
+
+        .channel-item.active {
+            border-color: var(--primary-color);
+            background: rgba(109, 235, 50, 0.2);
+            box-shadow: 0 0 15px rgba(109, 235, 50, 0.2);
+        }
+
+        .channel-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .channel-item:hover .channel-logo {
+            transform: scale(1.1);
+        }
+
+        .channel-name {
+            font-size: 0.85rem;
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Estilos para pantallas grandes */
+        @media (min-width: 1024px) {
+            .live-content {
+                grid-template-columns: 2fr 1fr;
+            }
+
+            .main-player {
+                padding-top: 50%; /* Ajuste para una mejor proporción en pantallas grandes */
+            }
+        }
+
+        /* Estilos para pantallas medianas */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .live-content {
+                grid-template-columns: 1fr;
+            }
+
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        /* Estilos para móviles */
+        @media (max-width: 767px) {
+            .live-content {
+                padding: 0.5rem;
+                gap: 1rem;
+            }
+
+            .main-player {
+                padding-top: 65%; /* Mayor altura en móviles */
+            }
+
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .player-header h2 {
+                font-size: 1rem;
+            }
+
+            .channel-item {
+                padding: 0.6rem;
+            }
+
+            .channel-logo {
+                width: 40px;
+                height: 40px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1199,6 +1389,42 @@
                 <!-- El contenido de las noticias se cargará aquí -->
             </div>
         </div>
+
+        <!-- Sección En Vivo -->
+        <div id="en-vivo-section" class="content-section" style="display: none;">
+            <div class="live-content">
+                <!-- Reproductor principal -->
+                <div class="main-player-container">
+                    <div class="player-header">
+                        <h2><i class="fas fa-broadcast-tower"></i> Transmisión En Vivo</h2>
+                    </div>
+                    <div id="mainPlayer" class="main-player">
+                        <iframe id="currentChannel" 
+                                frameborder="0" 
+                                allowfullscreen 
+                                allow="autoplay; fullscreen"
+                                scrolling="no"></iframe>
+                    </div>
+                    <div class="current-channel-info">
+                        <div class="channel-header">
+                            <img id="currentChannelLogo" class="current-channel-logo" src="" alt="">
+                            <div>
+                                <h3 id="currentChannelName">Cargando...</h3>
+                                <p id="currentChannelDescription" class="channel-description">Cargando descripción...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de canales -->
+                <div class="channels-list">
+                    <div class="channels-category">
+                        <h4><i class="fas fa-tv"></i> Canales Disponibles</h4>
+                        <div id="sportsChannelsList" class="channels-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Agregar el menú de navegación inferior antes del cierre del body -->
@@ -1215,19 +1441,59 @@
             <i class="fas fa-newspaper"></i>
             <span>Noticias</span>
         </a>
+        <a href="#" class="nav-item" data-section="en-vivo-section">
+            <i class="fas fa-video"></i>
+            <span>En Vivo</span>
+        </a>
     </nav>
+    
 
     <script>
         // Verificar si el usuario está autenticado
         function checkAuth() {
-            if (!sessionStorage.getItem('userAuth')) {
-                window.location.href = '../index.html';
+            const userAuth = localStorage.getItem('userAuth');
+            const loginTimestamp = localStorage.getItem('loginTimestamp');
+            const validDate = localStorage.getItem('validDate');
+            const currentTime = new Date().getTime();
+            
+            // Verificar si la fecha de validez ha expirado
+            if (validDate) {
+                const [day, month, year] = validDate.split('/');
+                const expirationDate = new Date(year, month - 1, day);
+                if (new Date() > expirationDate) {
+                    // La suscripción ha expirado
+                    cerrarSesion();
+                    return;
+                }
             }
+            
+            // Verificar si han pasado 24 horas (86400000 ms)
+            const SESSION_DURATION = 86400000; // 24 horas en milisegundos
+            
+            if (!userAuth || !loginTimestamp || (currentTime - loginTimestamp) > SESSION_DURATION) {
+                // Limpiar datos de autenticación
+                localStorage.removeItem('userAuth');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userPlan');
+                localStorage.removeItem('validDate');
+                localStorage.removeItem('loginTimestamp');
+                
+                // Redirigir al login
+                window.location.href = '../index.html';
+                return;
+            }
+            
+            // Renovar el timestamp si la sesión sigue activa
+            localStorage.setItem('loginTimestamp', currentTime);
         }
 
         // Función para cerrar sesión
         function cerrarSesion() {
-            sessionStorage.removeItem('userAuth');
+            localStorage.removeItem('userAuth');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userPlan');
+            localStorage.removeItem('validDate');
+            localStorage.removeItem('loginTimestamp');
             window.location.href = '../index.html';
         }
 
@@ -1242,9 +1508,9 @@
 
         // Agregar después del checkAuth()
         function loadUserInfo() {
-            const userName = sessionStorage.getItem('userName') || 'Usuario';
-            const userPlan = sessionStorage.getItem('userPlan') || 'No disponible';
-            const validDate = sessionStorage.getItem('validDate') || 'No disponible';
+            const userName = localStorage.getItem('userName') || 'Usuario';
+            const userPlan = localStorage.getItem('userPlan') || 'No disponible';
+            const validDate = localStorage.getItem('validDate') || 'No disponible';
             
             // Actualizar el nombre de usuario
             document.getElementById('userName').textContent = userName;
@@ -2211,6 +2477,125 @@ y suggestedBet es un número entre 1 y 5 dólares para apostar basado en la conf
                     }
                 });
             });
+        });
+
+        // Función para cargar los canales deportivos
+        async function loadSportsChannels() {
+            try {
+                const response = await fetch('canales.json');
+                const data = await response.json();
+                
+                // Filtrar y ordenar canales deportivos
+                const sportsChannels = data.canales
+                    .filter(channel => channel.categoria === "Deportes")
+                    .sort((a, b) => {
+                        // Ordenar primero los canales ESPN
+                        if (a.nombre.includes('ESPN') && b.nombre.includes('ESPN')) {
+                            return a.nombre.localeCompare(b.nombre);
+                        }
+                        if (a.nombre.includes('ESPN')) return -1;
+                        if (b.nombre.includes('ESPN')) return 1;
+                        return a.nombre.localeCompare(b.nombre);
+                    });
+
+                const channelsContainer = document.getElementById('sportsChannelsList');
+                channelsContainer.innerHTML = '';
+
+                sportsChannels.forEach((channel, index) => {
+                    const channelElement = document.createElement('div');
+                    channelElement.className = `channel-item ${index === 0 ? 'active' : ''}`;
+                    channelElement.innerHTML = `
+                        <img src="${channel.logo}" alt="${channel.nombre}" class="channel-logo">
+                        <p class="channel-name">${channel.nombre}</p>
+                    `;
+                    
+                    channelElement.addEventListener('click', () => {
+                        // Actualizar canal activo
+                        document.querySelectorAll('.channel-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        channelElement.classList.add('active');
+                        
+                        // Actualizar reproductor
+                        loadChannel(channel);
+                    });
+                    
+                    channelsContainer.appendChild(channelElement);
+
+                    // Cargar el primer canal por defecto
+                    if (index === 0) {
+                        loadChannel(channel);
+                    }
+                });
+            } catch (error) {
+                console.error('Error al cargar los canales:', error);
+            }
+        }
+
+        // Función para cargar un canal específico
+        function loadChannel(channel) {
+            const iframe = document.getElementById('currentChannel');
+            const channelName = document.getElementById('currentChannelName');
+            const channelDescription = document.getElementById('currentChannelDescription');
+            const channelLogo = document.getElementById('currentChannelLogo');
+            
+            // Actualizar la información del canal
+            channelName.textContent = channel.nombre;
+            channelDescription.textContent = channel.descripcion;
+            channelLogo.src = channel.logo;
+            channelLogo.alt = channel.nombre;
+
+            // Configurar el iframe con volumen activado
+            const url = new URL(channel.url_stream);
+            url.searchParams.set('autoplay', '1');
+            url.searchParams.set('muted', '0'); // Asegurar que no esté muteado
+            url.searchParams.set('volume', '100'); // Establecer volumen al máximo
+            iframe.src = url.toString();
+        }
+
+        // Modificar el event listener del menú inferior
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = item.dataset.section;
+                
+                // Actualizar navegación
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                item.classList.add('active');
+                
+                // Mostrar sección
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(sectionId).style.display = 'block';
+                
+                // Cargar contenido específico
+                if (sectionId === 'en-vivo-section') {
+                    loadSportsChannels();
+                }
+            });
+        });
+
+        // Agregar al final del archivo
+        function initSessionCheck() {
+            // Verificar la sesión cada 5 minutos
+            setInterval(checkAuth, 300000);
+            
+            // Verificar la sesión cuando la pestaña vuelve a estar activa
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    checkAuth();
+                }
+            });
+        }
+
+        // Llamar a la función cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadUserInfo();
+            initSessionCheck();
         });
     </script>
     <script>
